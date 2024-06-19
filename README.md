@@ -19,8 +19,8 @@ Welcome to the Threads Clone project! This is a social media application built w
 - **🔊 Notification Sounds**: Get audio alerts for important activities
 
 
-### 🔑 Login Page
-![Uploading image.png…]()
+### 🔑 SignUp Page
+![image](https://github.com/Jeeya-Inamdar/Threads-Clone/assets/129672572/d7fafb84-fc14-422b-b892-a76048c1cafc)
 
 
 ### 🏠 Home Page
