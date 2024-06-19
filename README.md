@@ -20,7 +20,7 @@ Welcome to the Threads Clone project! This is a social media application built w
 
 
 ### 🔑 Login Page
-![Screenshot 2024-06-19 214417](https://github.com/Jeeya-Inamdar/Threads-Clone/assets/129672572/f39c862a-7b50-40b0-a539-4e47527fcbf0)
+![Uploading image.png…]()
 
 
 ### 🏠 Home Page
@@ -50,38 +50,38 @@ Ensure you have the following installed:
 ### Installation
 
 
-# 1. 📥 Clone the repository
+#### 1. 📥 Clone the repository
     ```bash
     git clone https://github.com/yourusername/threads-clone.git
     cd threads-clone
 
-# 2. 📦 Install server dependencies
+## 2. 📦 Install server dependencies
      ```bash
     cd server
     npm install
 
-# 3. 📦 Install client dependencies
+### 3. 📦 Install client dependencies
      ```bash
     cd ../client
     npm install
 
-# 4. 🔧 Create a .env file in the server directory and add your environment variables
+### 4. 🔧 Create a .env file in the server directory and add your environment variables
      ```bash
     echo "MONGO_URI=your_mongo_db_connection_string" >> ../server/.env
     echo "JWT_SECRET=your_jwt_secret" >> ../server/.env
 
-# 5. ▶️ Run the application
+### 5. ▶️ Run the application
 
-# Server
+### Server
      ```bash
     cd ../server
     npm start
 
-# Client
+### Client
      ```bash
     cd ../client
     npm start
 
-# 6. 🌐 Open your browser and navigate to
+### 6. 🌐 Open your browser and navigate to
     ```bash
      http://localhost:3000
