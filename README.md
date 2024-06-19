@@ -51,37 +51,30 @@ Ensure you have the following installed:
 
 
 #### 1. 📥 Clone the repository
-    ```bash
     git clone https://github.com/yourusername/threads-clone.git
     cd threads-clone
 
 ## 2. 📦 Install server dependencies
-     ```bash
     cd server
     npm install
 
 ### 3. 📦 Install client dependencies
-     ```bash
     cd ../client
     npm install
 
 ### 4. 🔧 Create a .env file in the server directory and add your environment variables
-     ```bash
     echo "MONGO_URI=your_mongo_db_connection_string" >> ../server/.env
     echo "JWT_SECRET=your_jwt_secret" >> ../server/.env
 
 ### 5. ▶️ Run the application
 
 ### Server
-     ```bash
     cd ../server
     npm start
 
 ### Client
-     ```bash
     cd ../client
     npm start
 
 ### 6. 🌐 Open your browser and navigate to
-    ```bash
-     http://localhost:3000
+     http://localhost:5000
