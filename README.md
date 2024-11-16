@@ -67,13 +67,7 @@ Ensure you have the following installed:
     echo "JWT_SECRET=your_jwt_secret" >> ../server/.env
 
 ### 5. ▶️ Run the application
-
-### Server
-    npm start
-
-### Client
-    cd ../fronend
-    npm run dev
+    npm run build
 
 ### 6. 🌐 Open your browser and navigate to
-     http://localhost:3000
+     http://localhost:5000
