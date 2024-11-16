@@ -1,6 +1,6 @@
-# 🧵 Threads Clone
+# 🧵 Swapnex
 
-Welcome to the Threads Clone project! This is a social media application built with the MERN stack, featuring real-time capabilities and a sleek UI. Below you'll find an overview of the project, its features, and how to get started.
+Welcome to the Swapnex project! This is a social media application built with the MERN stack, featuring real-time capabilities and a sleek UI. Below you'll find an overview of the project, its features, and how to get started.
 
 ## 🌟 FEATURES 
 
@@ -20,23 +20,23 @@ Welcome to the Threads Clone project! This is a social media application built w
 
 
 ### 🔑 SignUp Page
-![image](https://github.com/Jeeya-Inamdar/Threads-Clone/assets/129672572/d7fafb84-fc14-422b-b892-a76048c1cafc)
+![image](https://github.com/Jeeya-Inamdar/swapnex/assets/129672572/d7fafb84-fc14-422b-b892-a76048c1cafc)
 
 
 ### 🏠 Home Page
-![Screenshot 2024-06-19 214511](https://github.com/Jeeya-Inamdar/Threads-Clone/assets/129672572/ebeb527d-3768-49fd-ab92-3f4e4fbbb376)
+![Screenshot 2024-06-19 214511](https://github.com/Jeeya-Inamdar/swapnex/assets/129672572/ebeb527d-3768-49fd-ab92-3f4e4fbbb376)
 
 
 ### 🧑‍💻 Profile 
-![Screenshot 2024-06-19 214628](https://github.com/Jeeya-Inamdar/Threads-Clone/assets/129672572/55bbcf22-ece0-4e89-93d8-3c3437b9ad39)
+![Screenshot 2024-06-19 214628](https://github.com/Jeeya-Inamdar/swapnex/assets/129672572/55bbcf22-ece0-4e89-93d8-3c3437b9ad39)
 
 
 ## 💬 Chat App
-![Screenshot 2024-06-19 214747](https://github.com/Jeeya-Inamdar/Threads-Clone/assets/129672572/eae54c06-9ff3-40d9-ab23-aadbf4f152f0)
+![Screenshot 2024-06-19 214747](https://github.com/Jeeya-Inamdar/swapnex/assets/129672572/eae54c06-9ff3-40d9-ab23-aadbf4f152f0)
 
 
 ## 🌗 Dark/Light Mode
-![image](https://github.com/Jeeya-Inamdar/Threads-Clone/assets/129672572/f2f0b553-c47a-41c9-a3ee-c3086cb1757f)
+![image](https://github.com/Jeeya-Inamdar/swapnex/assets/129672572/f2f0b553-c47a-41c9-a3ee-c3086cb1757f)
 
 
 ## 🚀 Getting Started
@@ -51,15 +51,15 @@ Ensure you have the following installed:
 
 
 #### 1. 📥 Clone the repository
-    git clone https://github.com/yourusername/threads-clone.git
-    cd threads-clone
+    git clone https://github.com/yourusername/swapnex.git
+    cd swapnex
 
 ## 2. 📦 Install server dependencies
-    cd server
+    cd backend
     npm install
 
 ### 3. 📦 Install client dependencies
-    cd ../client
+    cd ../frontend
     npm install
 
 ### 4. 🔧 Create a .env file in the server directory and add your environment variables
@@ -69,12 +69,11 @@ Ensure you have the following installed:
 ### 5. ▶️ Run the application
 
 ### Server
-    cd ../server
     npm start
 
 ### Client
-    cd ../client
-    npm start
+    cd ../fronend
+    npm run dev
 
 ### 6. 🌐 Open your browser and navigate to
-     http://localhost:5000
+     http://localhost:3000
