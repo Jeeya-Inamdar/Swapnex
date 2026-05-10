@@ -5,7 +5,7 @@ import { useRecoilValue } from "recoil";
 
 const useFollowUnfollow = (user) => {
 	const currentUser = useRecoilValue(userAtom);
-	const [following, setFollowing] = useState(user.followers.includes(currentUser?._id));
+	const [following, setFollowing] = useState(user?.followers?.includes(currentUser?._id) || false);
 	const [updating, setUpdating] = useState(false);
 	const showToast = useShowToast();
 
@@ -32,10 +32,10 @@ const useFollowUnfollow = (user) => {
 
 			if (following) {
 				showToast("Success", `Unfollowed ${user.name}`, "success");
-				user.followers.pop(); // simulate removing from followers
+				if (user.followers) user.followers.pop(); // simulate removing from followers
 			} else {
 				showToast("Success", `Followed ${user.name}`, "success");
-				user.followers.push(currentUser?._id); // simulate adding to followers
+				if (user.followers) user.followers.push(currentUser?._id); // simulate adding to followers
 			}
 			setFollowing(!following);
 

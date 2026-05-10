@@ -1,241 +1,184 @@
-import {
-	Box,
-	Button,
-	Flex,
-	FormControl,
-	Input,
-	Modal,
-	ModalBody,
-	ModalCloseButton,
-	ModalContent,
-	ModalFooter,
-	ModalHeader,
-	ModalOverlay,
-	Text,
-	useDisclosure,
-} from "@chakra-ui/react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
 import useShowToast from "../hooks/useShowToast";
 import postsAtom from "../atoms/postsAtom";
+import { Heart, MessageCircle, Share2, Eye, Loader2, Send } from "lucide-react";
+import Modal from "./Modal";
+import { motion } from "framer-motion";
 
-const Actions = ({ post }) => {
-	const user = useRecoilValue(userAtom);
-	const [liked, setLiked] = useState(post.likes.includes(user?._id));
-	const [posts, setPosts] = useRecoilState(postsAtom);
-	const [isLiking, setIsLiking] = useState(false);
-	const [isReplying, setIsReplying] = useState(false);
-	const [reply, setReply] = useState("");
+const Actions = ({ post, postedBy }) => {
+  const user = useRecoilValue(userAtom);
+  const [liked, setLiked] = useState(post.likes.includes(user?._id));
+  const [posts, setPosts] = useRecoilState(postsAtom);
+  const [isLiking, setIsLiking] = useState(false);
+  const [isReplying, setIsReplying] = useState(false);
+  const [reply, setReply] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-	const showToast = useShowToast();
-	const { isOpen, onOpen, onClose } = useDisclosure();
+  const showToast = useShowToast();
 
-	const handleLikeAndUnlike = async () => {
-		if (!user) return showToast("Error", "You must be logged in to like a post", "error");
-		if (isLiking) return;
-		setIsLiking(true);
-		try {
-			const res = await fetch("/api/posts/like/" + post._id, {
-				method: "PUT",
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
-			const data = await res.json();
-			if (data.error) return showToast("Error", data.error, "error");
+  const handleLikeAndUnlike = async (e) => {
+    e?.preventDefault();
+    if (!user) return showToast("Error", "You must be logged in to like a post", "error");
+    if (isLiking) return;
+    setIsLiking(true);
+    try {
+      const res = await fetch("/api/posts/like/" + post._id, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await res.json();
+      if (data.error) return showToast("Error", data.error, "error");
 
-			if (!liked) {
-				// add the id of the current user to post.likes array
-				const updatedPosts = posts.map((p) => {
-					if (p._id === post._id) {
-						return { ...p, likes: [...p.likes, user._id] };
-					}
-					return p;
-				});
-				setPosts(updatedPosts);
-			} else {
-				// remove the id of the current user from post.likes array
-				const updatedPosts = posts.map((p) => {
-					if (p._id === post._id) {
-						return { ...p, likes: p.likes.filter((id) => id !== user._id) };
-					}
-					return p;
-				});
-				setPosts(updatedPosts);
-			}
+      if (!liked) {
+        const updatedPosts = posts.map((p) => {
+          if (p._id === post._id) {
+            return { ...p, likes: [...p.likes, user._id] };
+          }
+          return p;
+        });
+        setPosts(updatedPosts);
+      } else {
+        const updatedPosts = posts.map((p) => {
+          if (p._id === post._id) {
+            return { ...p, likes: p.likes.filter((id) => id !== user._id) };
+          }
+          return p;
+        });
+        setPosts(updatedPosts);
+      }
+      setLiked(!liked);
+    } catch (error) {
+      showToast("Error", error.message, "error");
+    } finally {
+      setIsLiking(false);
+    }
+  };
 
-			setLiked(!liked);
-		} catch (error) {
-			showToast("Error", error.message, "error");
-		} finally {
-			setIsLiking(false);
-		}
-	};
+  const handleReply = async (e) => {
+    e?.preventDefault();
+    if (!user) return showToast("Error", "You must be logged in to reply to a post", "error");
+    if (isReplying) return;
+    if (!reply.trim()) return;
 
-	const handleReply = async () => {
-		if (!user) return showToast("Error", "You must be logged in to reply to a post", "error");
-		if (isReplying) return;
-		setIsReplying(true);
-		try {
-			const res = await fetch("/api/posts/reply/" + post._id, {
-				method: "PUT",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ text: reply }),
-			});
-			const data = await res.json();
-			if (data.error) return showToast("Error", data.error, "error");
+    setIsReplying(true);
+    try {
+      const res = await fetch("/api/posts/reply/" + post._id, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: reply }),
+      });
+      const data = await res.json();
+      if (data.error) return showToast("Error", data.error, "error");
 
-			const updatedPosts = posts.map((p) => {
-				if (p._id === post._id) {
-					return { ...p, replies: [...p.replies, data] };
-				}
-				return p;
-			});
-			setPosts(updatedPosts);
-			showToast("Success", "Reply posted successfully", "success");
-			onClose();
-			setReply("");
-		} catch (error) {
-			showToast("Error", error.message, "error");
-		} finally {
-			setIsReplying(false);
-		}
-	};
+      const updatedPosts = posts.map((p) => {
+        if (p._id === post._id) {
+          return { ...p, replies: [...p.replies, data] };
+        }
+        return p;
+      });
+      setPosts(updatedPosts);
+      showToast("Success", "Reply posted successfully", "success");
+      setIsModalOpen(false);
+      setReply("");
+    } catch (error) {
+      showToast("Error", error.message, "error");
+    } finally {
+      setIsReplying(false);
+    }
+  };
 
-	return (
-		<Flex flexDirection='column'>
-			<Flex gap={3} my={2} onClick={(e) => e.preventDefault()}>
-				<svg
-					aria-label='Like'
-					color={liked ? "rgb(237, 73, 86)" : ""}
-					fill={liked ? "rgb(237, 73, 86)" : "transparent"}
-					height='19'
-					role='img'
-					viewBox='0 0 24 22'
-					width='20'
-					onClick={handleLikeAndUnlike}
-				>
-					<path
-						d='M1 7.66c0 4.575 3.899 9.086 9.987 12.934.338.203.74.406 1.013.406.283 0 .686-.203 1.013-.406C19.1 16.746 23 12.234 23 7.66 23 3.736 20.245 1 16.672 1 14.603 1 12.98 1.94 12 3.352 11.042 1.952 9.408 1 7.328 1 3.766 1 1 3.736 1 7.66Z'
-						stroke='currentColor'
-						strokeWidth='2'
-					></path>
-				</svg>
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center gap-4">
+        <button
+          type="button"
+          onClick={handleLikeAndUnlike}
+          className={`group flex items-center gap-1.5 transition-colors ${
+            liked ? "text-rose-500" : "text-slate-500 hover:text-rose-400"
+          }`}
+        >
+          <div className={`flex h-9 w-9 items-center justify-center rounded-xl transition-colors ${
+            liked ? "bg-rose-500/10" : "bg-slate-900/50 group-hover:bg-rose-500/10"
+          }`}>
+            <Heart className={`h-5 w-5 ${liked ? "fill-current" : ""}`} />
+          </div>
+          <span className="text-xs font-semibold">{post.likes.length}</span>
+        </button>
 
-				<svg
-					aria-label='Comment'
-					color=''
-					fill=''
-					height='20'
-					role='img'
-					viewBox='0 0 24 24'
-					width='20'
-					onClick={onOpen}
-				>
-					<title>Comment</title>
-					<path
-						d='M20.656 17.008a9.993 9.993 0 1 0-3.59 3.615L22 22Z'
-						fill='none'
-						stroke='currentColor'
-						strokeLinejoin='round'
-						strokeWidth='2'
-					></path>
-				</svg>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            setIsModalOpen(true);
+          }}
+          className="group flex items-center gap-1.5 text-slate-500 transition-colors hover:text-cyan-400"
+        >
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900/50 group-hover:bg-cyan-500/10">
+            <MessageCircle className="h-5 w-5" />
+          </div>
+          <span className="text-xs font-semibold">{post.replies.length}</span>
+        </button>
 
-				<RepostSVG />
-				<ShareSVG />
-			</Flex>
+        <Link
+          to={`/${postedBy}/post/${post._id}`}
+          className="group flex items-center gap-1.5 text-slate-500 transition-colors hover:text-cyan-400"
+        >
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900/50 group-hover:bg-cyan-500/10">
+            <Eye className="h-5 w-5" />
+          </div>
+          <span className="text-xs font-semibold">Discuss</span>
+        </Link>
 
-			<Flex gap={2} alignItems={"center"}>
-				<Text color={"gray.light"} fontSize='sm'>
-					{post.replies.length} replies
-				</Text>
-				<Box w={0.5} h={0.5} borderRadius={"full"} bg={"gray.light"}></Box>
-				<Text color={"gray.light"} fontSize='sm'>
-					{post.likes.length} likes
-				</Text>
-			</Flex>
+        <button
+          type="button"
+          className="group flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900/50 text-slate-500 transition-colors hover:bg-violet-500/10 hover:text-violet-400"
+        >
+          <Share2 className="h-5 w-5" />
+        </button>
+      </div>
 
-			<Modal isOpen={isOpen} onClose={onClose}>
-				<ModalOverlay />
-				<ModalContent>
-					<ModalHeader></ModalHeader>
-					<ModalCloseButton />
-					<ModalBody pb={6}>
-						<FormControl>
-							<Input
-								placeholder='Reply goes here..'
-								value={reply}
-								onChange={(e) => setReply(e.target.value)}
-							/>
-						</FormControl>
-					</ModalBody>
-
-					<ModalFooter>
-						<Button colorScheme='blue' size={"sm"} mr={3} isLoading={isReplying} onClick={handleReply}>
-							Reply
-						</Button>
-					</ModalFooter>
-				</ModalContent>
-			</Modal>
-		</Flex>
-	);
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Post your reply"
+      >
+        <div className="flex gap-4">
+          <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-slate-700/50">
+            {user?.profilePic ? (
+              <img src={user.profilePic} alt="" className="h-full w-full object-cover" />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-slate-800 text-xs font-bold text-slate-400">
+                {user?.username?.[0]?.toUpperCase()}
+              </div>
+            )}
+          </div>
+          <div className="flex-1 space-y-4">
+            <textarea
+              autoFocus
+              placeholder="What's your reply?"
+              value={reply}
+              onChange={(e) => setReply(e.target.value)}
+              className="min-h-[100px] w-full resize-none bg-transparent text-sm text-white outline-none placeholder:text-slate-600"
+            />
+            <div className="flex justify-end pt-2">
+              <button
+                type="button"
+                onClick={handleReply}
+                disabled={isReplying || !reply.trim()}
+                className="flex items-center gap-2 rounded-2xl bg-cyan-500 px-6 py-2.5 text-sm font-bold text-slate-950 transition hover:bg-cyan-400 disabled:opacity-50"
+              >
+                {isReplying ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                Reply
+              </button>
+            </div>
+          </div>
+        </div>
+      </Modal>
+    </div>
+  );
 };
 
 export default Actions;
-
-const RepostSVG = () => {
-	return (
-		<svg
-			aria-label='Repost'
-			color='currentColor'
-			fill='currentColor'
-			height='20'
-			role='img'
-			viewBox='0 0 24 24'
-			width='20'
-		>
-			<title>Repost</title>
-			<path
-				fill=''
-				d='M19.998 9.497a1 1 0 0 0-1 1v4.228a3.274 3.274 0 0 1-3.27 3.27h-5.313l1.791-1.787a1 1 0 0 0-1.412-1.416L7.29 18.287a1.004 1.004 0 0 0-.294.707v.001c0 .023.012.042.013.065a.923.923 0 0 0 .281.643l3.502 3.504a1 1 0 0 0 1.414-1.414l-1.797-1.798h5.318a5.276 5.276 0 0 0 5.27-5.27v-4.228a1 1 0 0 0-1-1Zm-6.41-3.496-1.795 1.795a1 1 0 1 0 1.414 1.414l3.5-3.5a1.003 1.003 0 0 0 0-1.417l-3.5-3.5a1 1 0 0 0-1.414 1.414l1.794 1.794H8.27A5.277 5.277 0 0 0 3 9.271V13.5a1 1 0 0 0 2 0V9.271a3.275 3.275 0 0 1 3.271-3.27Z'
-			></path>
-		</svg>
-	);
-};
-
-const ShareSVG = () => {
-	return (
-		<svg
-			aria-label='Share'
-			color=''
-			fill='rgb(243, 245, 247)'
-			height='20'
-			role='img'
-			viewBox='0 0 24 24'
-			width='20'
-		>
-			<title>Share</title>
-			<line
-				fill='none'
-				stroke='currentColor'
-				strokeLinejoin='round'
-				strokeWidth='2'
-				x1='22'
-				x2='9.218'
-				y1='3'
-				y2='10.083'
-			></line>
-			<polygon
-				fill='none'
-				points='11.698 20.334 22 3.001 2 3.001 9.218 10.084 11.698 20.334'
-				stroke='currentColor'
-				strokeLinejoin='round'
-				strokeWidth='2'
-			></polygon>
-		</svg>
-	);
-};

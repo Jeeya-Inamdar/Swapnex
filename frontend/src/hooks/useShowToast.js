@@ -1,23 +1,27 @@
-import { useToast } from "@chakra-ui/toast";
 import { useCallback } from "react";
+import toast from "react-hot-toast";
 
 const useShowToast = () => {
-	const toast = useToast();
+  const showToast = useCallback((title, description, status) => {
+    // Mapping Chakra status to react-hot-toast methods
+    const message = description || title;
+    
+    switch (status) {
+      case "success":
+        toast.success(message);
+        break;
+      case "error":
+        toast.error(message);
+        break;
+      case "loading":
+        toast.loading(message);
+        break;
+      default:
+        toast(message);
+    }
+  }, []);
 
-	const showToast = useCallback(
-		(title, description, status) => {
-			toast({
-				title,
-				description,
-				status,
-				duration: 3000,
-				isClosable: true,
-			});
-		},
-		[toast]
-	);
-
-	return showToast;
+  return showToast;
 };
 
 export default useShowToast;
