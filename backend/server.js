@@ -50,19 +50,19 @@ app.use("/api/messages", messageRoutes);
 //   console.log("Seed route enabled");
 // }
 
-app.use((req, res, next) => {
-  res.status(404).json({ error: "Route not found" });
-});
-
-app.use(errorHandler);
-
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "/frontend/dist")));
+  app.use(express.static(path.join(__dirname, "frontend", "dist")));
 
   app.get("*", (req, res) => {
     res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
   });
 }
+
+app.use((req, res, next) => {
+  res.status(404).json({ error: "Route not found" });
+});
+
+app.use(errorHandler);
 
 server.listen(PORT, () =>
   console.log(`Server started at http://localhost:${PORT}`)
